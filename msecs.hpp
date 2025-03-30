@@ -44,12 +44,7 @@
 namespace msecs {
 
 template <typename... Types> class World {
-
-        std::tuple<std::vector<uint64_t>, std::vector<std::unique_ptr<Types>>...> ComponentStore {};
-
     public:
-        static_assert(sizeof...(Types) <= 64, "Too many types! Maximum allowed is 64.");
-
         template <typename... CompTypes> void add_entity(CompTypes&&... components)
         {
 
@@ -60,7 +55,6 @@ template <typename... Types> class World {
                 auto& entity_ids = std::get<0>(ComponentStore);
                 entity_ids.push_back(id);
 
-                // Store each component inside the tuple of vectors
                 (std::get<std::vector<std::unique_ptr<std::decay_t<CompTypes>>>>(ComponentStore)
                         .push_back(std::make_unique<std::decay_t<CompTypes>>(
                             std::forward<CompTypes>(components))),
@@ -87,7 +81,11 @@ template <typename... Types> class World {
                 }
         }
 
-    private:
+    protected:
+        static_assert(sizeof...(Types) <= 64, "Too many types! Maximum allowed is 64.");
+
+        std::tuple<std::vector<uint64_t>, std::vector<std::unique_ptr<Types>>...> ComponentStore {};
+
         template <typename T> static constexpr int get_mask() { return typeToMask[get_index<T>()]; }
 
         static constexpr std::array<int, sizeof...(Types) + 1> typeToMask = [] {

@@ -1,6 +1,5 @@
-#include "msecs.hpp"
+#include "../msecs.hpp"
 #include <cstdio>
-#include <vector>
 
 struct Position {
         int x, y;
@@ -35,29 +34,25 @@ int main(void)
                         printf(" %s is at (%d, %d)\t", id.name, pos.x, pos.y);
                 });
 
+                // Causes error due to mismatched template and function args
                 /**
-                 *  // Causes error due to mismatched template and function args
-                 *
-                 *  world.run_system<Position, Identity>([&](Position& pos, Velocity& vel) {
-                 *          pos.x += vel.x;
-                 *          pos.y += vel.y;
-                 *  });
-                 *
-                 */
+                world.run_system<Position, Identity>([&](Position& pos, Velocity& vel) {
+                        pos.x += vel.x;
+                        pos.y += vel.y;
+                });
+                */
 
+                // Causes error due to misplaced template and function args
                 /**
-                 *   // Causes error due to misplaced template and function args
-                 *   world.run_system<Identity, Position>([&](Position& pos, Identity& id) {
-                 *           printf(" %s is at (%d, %d)\t", id.name, pos.x, pos.y);
-                 *   });
-                 */
+                world.run_system<Identity, Position>([&](Position& pos, Identity& id) {
+                        printf(" %s is at (%d, %d)\t", id.name, pos.x, pos.y);
+                });
+                */
 
                 // Works fine as long as both args are in same order
                 world.run_system<Identity, Position>([&](Identity& id, Position& pos) {
                         printf(" %s is at (%d, %d)\t", id.name, pos.x, pos.y);
                 });
-                world.run_system<Identity, std::vector<int>>(
-                    [&](Identity& _id, std::vector<int> _vec) {});
 
                 printf("\n");
         }
