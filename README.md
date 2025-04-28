@@ -1,16 +1,40 @@
-# M.S.E.C.S 
+# M.S.E.C.S – Minimal Simple Entity Component System
 
-A ECS aimed to be simple and minimal but complete in functionality
+**M.S.E.C.S** is a minimalistic Entity Component System (ECS). Its simple, easy to use, and focused on essential features.
 
+---
 
-# What this ECS CAN do
+## Features
 
-- [x] Create a ECS World with only certain allowed types
-- [x] Add components
-- [x] Run Systems
+This ECS currently supports:
 
-# What this ECS CANNOT do
+- Creating an ECS world with a defined set of allowed component types  
+- Adding components to entities  
+- Running systems over entities and components  
+- Deleting entities  
 
-- [x] Delete an entity
-- [x] Access an entity individually
-- [x] Reposition entities
+---
+
+## Limitations
+
+This ECS intentionally does **not** support:
+
+- Direct referencing of individual entities  
+- Reordering or repositioning of entities within storage  
+
+Above limitations are by design and keeps the implementation performant.
+
+---
+
+## Usage 
+Everything is in "msecs.hpp" header file, just put the file into projects include dir.
+
+---
+
+## Roadmap
+
+Planned improvements and additions:
+
+- [x] Use a spare set structure for the main component store  
+- [x] Introduce a `DenseWorld` class as a complement to the current `World` class, offering a more compact representation  
+
