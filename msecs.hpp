@@ -84,9 +84,40 @@ template <typename... Types> class World {
                 }
         }
 
-    protected:
-        static_assert(sizeof...(Types) <= 64, "Too many types! Maximum allowed is 64.");
+        template <typename... Args, typename FilterFn> void filter_entites(FilterFn func)
+        {
 
+                (is_valid_component<std::decay_t<Args>>(), ...);
+
+                uint64_t system_id = ((get_mask<Args>()) | ...);
+
+                std::vector<uint64_t>& entity_ids = std::get<0>(ComponentStore);
+
+                size_t current_entity = 0;
+                while (current_entity < entity_ids.size()) {
+                        if (!(((entity_ids[current_entity] & system_id)
+                                  != system_id) // Check if FilterFn is compaitable with
+                                                // current_entity
+                                && func(*std::get<std::vector<std::unique_ptr<Args>>>(
+                                    ComponentStore)[current_entity]...) // Check if func wants
+                                                                        // current_entity deleted
+
+                                )) {
+                                current_entity++;
+                                continue;
+                        }
+                        auto delete_entity = [&](auto& component_vector) {
+                                std::swap(component_vector[current_entity],
+                                    component_vector[component_vector.size() - 1]);
+                                component_vector.pop_back();
+                        };
+                        (delete_entity(
+                             std::get<std::vector<std::unique_ptr<Types>>>(ComponentStore)),
+                            ...);
+                }
+        }
+
+    protected:
         std::tuple<std::vector<uint64_t>, std::vector<std::unique_ptr<Types>>...> ComponentStore {};
 
         template <typename T> static constexpr int get_mask() { return typeToMask[get_index<T>()]; }
