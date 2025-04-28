@@ -44,6 +44,9 @@
 namespace msecs {
 
 template <typename... Types> class World {
+
+        static_assert(sizeof...(Types) <= 64, "Too many types! Maximum allowed is 64.");
+
     public:
         template <typename... CompTypes> void add_entity(CompTypes&&... components)
         {
