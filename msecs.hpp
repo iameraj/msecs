@@ -89,6 +89,9 @@ template <typename... Types> class World {
 
                 (is_valid_component<std::decay_t<Args>>(), ...);
 
+                static_assert(is_valid_filter<FilterFn, Args...>::value,
+                    "Filter function must be callable with Args&... and return a bool");
+
                 constexpr uint64_t system_id = ((get_mask<Args>()) | ...);
 
                 std::vector<uint64_t>& entity_ids = std::get<0>(ComponentStore);
@@ -144,6 +147,11 @@ template <typename... Types> class World {
                         static_assert(get_mask<T>() != 0, "Component type is not registered!");
                 }
         }
+
+        template <typename Fn, typename... Args> struct is_valid_filter {
+                static constexpr bool value = std::is_invocable<Fn, Args&...>::value
+                    && std::is_convertible<std::invoke_result_t<Fn, Args&...>, bool>::value;
+        };
 };
 }; // namespace msecs
 
