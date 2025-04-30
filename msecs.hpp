@@ -84,28 +84,32 @@ template <typename... Types> class World {
                 }
         }
 
-        template <typename... Args, typename FilterFn> void filter_entites(FilterFn func)
+        template <typename... Args, typename FilterFn> void filter_entities(FilterFn func)
         {
 
                 (is_valid_component<std::decay_t<Args>>(), ...);
 
-                uint64_t system_id = ((get_mask<Args>()) | ...);
+                constexpr uint64_t system_id = ((get_mask<Args>()) | ...);
 
                 std::vector<uint64_t>& entity_ids = std::get<0>(ComponentStore);
 
                 size_t current_entity = 0;
-                auto delete_entity    = [&](auto& component_vector) {
-                        std::swap(component_vector[current_entity],
-                               component_vector[component_vector.size() - 1]);
-                        component_vector.pop_back();
+                auto should_delete    = [&]() {
+                        return !func(*std::get<std::vector<std::unique_ptr<Args>>>(
+                            ComponentStore)[current_entity]...);
                 };
+
+                auto delete_entity = [&](auto& component_vec) {
+                        std::swap(
+                            component_vec[current_entity], component_vec[component_vec.size() - 1]);
+                        component_vec.pop_back();
+                };
+
                 while (current_entity < entity_ids.size()) {
-                        if (((entity_ids[current_entity] & system_id) != system_id)
-                            && func(*std::get<std::vector<std::unique_ptr<Args>>>(
-                                ComponentStore)[current_entity]...)) {
-                                (delete_entity(
-                                     std::get<std::vector<std::unique_ptr<Types>>>(ComponentStore)),
-                                    ...);
+                        if (((entity_ids[current_entity] & system_id) == system_id)
+                            && should_delete()) {
+                                std::apply([&](auto&&... vec) { (delete_entity(vec), ...); },
+                                    ComponentStore);
                         } else {
                                 current_entity++;
                         }
