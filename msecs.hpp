@@ -143,9 +143,7 @@ template <typename... Types> class World {
 
         template <typename T> constexpr void is_valid_component()
         {
-                if constexpr (get_mask<T>() == 0) {
-                        static_assert(get_mask<T>() != 0, "Component type is not registered!");
-                }
+                static_assert(get_mask<T>() != 0, "Component type is not registered!");
         }
 
         template <typename Fn, typename... Args> struct is_valid_filter {
