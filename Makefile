@@ -1,5 +1,5 @@
 
-SRC = msecs.hpp
+SRC = include/msecs.hpp
 BUILD = build
 
 all: ${SRC}

@@ -1,4 +1,4 @@
-#include "../msecs.hpp"
+#include "../include/msecs.hpp"
 #include "classes.hpp"
 #include <cstdlib>
 #include <gtest/gtest.h>
