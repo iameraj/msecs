@@ -53,7 +53,7 @@ template <typename... Types> class World {
 
                 (is_valid_component<std::decay_t<CompTypes>>(), ...);
 
-                constexpr uint64_t id = (get_mask<std::decay_t<CompTypes>>() | ...);
+                constexpr uint64_t id = (get_mask<std::decay_t<CompTypes>>() | ... | 0ul);
 
                 auto& entity_ids = std::get<0>(ComponentStore);
                 entity_ids.push_back(id);
@@ -74,7 +74,7 @@ template <typename... Types> class World {
         {
                 (is_valid_component<std::decay_t<Args>>(), ...);
 
-                constexpr uint64_t system_id = ((get_mask<Args>()) | ...);
+                constexpr uint64_t system_id = ((get_mask<Args>()) | ... | 0ul);
 
                 auto& entity_ids = std::get<0>(ComponentStore);
                 for (size_t i = 0; i < entity_ids.size(); ++i) {
@@ -93,7 +93,7 @@ template <typename... Types> class World {
                 static_assert(is_valid_filter<FilterFn, Args...>::value,
                     "Filter function must be callable with Args&... and return a bool");
 
-                constexpr uint64_t system_id = ((get_mask<Args>()) | ...);
+                constexpr uint64_t system_id = ((get_mask<Args>()) | ... | 0ul);
 
                 std::vector<uint64_t>& entity_ids = std::get<0>(ComponentStore);
 
