@@ -20,7 +20,7 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(googletest)
-find_package(GTest REQUIRED)
+
 target_link_libraries(
     main-test 
     GTest::gtest 
