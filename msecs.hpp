@@ -94,26 +94,21 @@ template <typename... Types> class World {
                 std::vector<uint64_t>& entity_ids = std::get<0>(ComponentStore);
 
                 size_t current_entity = 0;
+                auto delete_entity    = [&](auto& component_vector) {
+                        std::swap(component_vector[current_entity],
+                               component_vector[component_vector.size() - 1]);
+                        component_vector.pop_back();
+                };
                 while (current_entity < entity_ids.size()) {
-                        if (!(((entity_ids[current_entity] & system_id)
-                                  != system_id) // Check if FilterFn is compaitable with
-                                                // current_entity
-                                && func(*std::get<std::vector<std::unique_ptr<Args>>>(
-                                    ComponentStore)[current_entity]...) // Check if func wants
-                                                                        // current_entity deleted
-
-                                )) {
+                        if (((entity_ids[current_entity] & system_id) != system_id)
+                            && func(*std::get<std::vector<std::unique_ptr<Args>>>(
+                                ComponentStore)[current_entity]...)) {
+                                (delete_entity(
+                                     std::get<std::vector<std::unique_ptr<Types>>>(ComponentStore)),
+                                    ...);
+                        } else {
                                 current_entity++;
-                                continue;
                         }
-                        auto delete_entity = [&](auto& component_vector) {
-                                std::swap(component_vector[current_entity],
-                                    component_vector[component_vector.size() - 1]);
-                                component_vector.pop_back();
-                        };
-                        (delete_entity(
-                             std::get<std::vector<std::unique_ptr<Types>>>(ComponentStore)),
-                            ...);
                 }
         }
 
