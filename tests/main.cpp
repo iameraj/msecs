@@ -50,7 +50,7 @@ TEST(WorldTests, FilterSystems)
 
         for (int i = 0; i < total_entites; ++i) { ecs.add_entity(Name(name)); }
 
-        ecs.filter_entites<Name>([&name](Name& n) { return n.value != name; });
+        ecs.filter_entities<Name>([&name](Name& n) { return n.value != name; });
 
         int alive_players = 0;
         ecs.run_system<Name>([&](Name& _) { alive_players++; });
@@ -79,7 +79,7 @@ TEST(WorldTests, FilterSystemsSenarioTest)
         ecs.run_system<Health>([&](Health& h) { dead_players += (h.current < 1) & 1; });
 
         // Filtering out dead players from the world
-        ecs.filter_entites<Health>([](Health& h) { return h.current > 0; });
+        ecs.filter_entities<Health>([](Health& h) { return h.current > 0; });
 
         // Counting remaining players and checking if all of them have have health
         // >=1
