@@ -12,9 +12,9 @@ TEST(WorldTests, AddEntities)
         // Add `final count` entities
         for (int i = 0; i < final_count; i++) { ecs.add_entity(Position::default_()); }
 
-        // Count the number of entites using `run_system`
+        // Empty template matches every entity so this function iterates over all entites
         int entity_count = 0;
-        ecs.run_system<Position>([&entity_count](Position _pos) { entity_count++; });
+        ecs.run_system([&]() { entity_count++; });
 
         EXPECT_EQ(entity_count, final_count);
 }
@@ -53,7 +53,7 @@ TEST(WorldTests, FilterSystems)
         ecs.filter_entities<Name>([&name](Name& n) { return n.value != name; });
 
         int alive_players = 0;
-        ecs.run_system<Name>([&](Name& _) { alive_players++; });
+        ecs.run_system([&]() { alive_players++; });
 
         ASSERT_EQ(alive_players, 0);
 }
@@ -81,8 +81,7 @@ TEST(WorldTests, FilterSystemsSenarioTest)
         // Filtering out dead players from the world
         ecs.filter_entities<Health>([](Health& h) { return h.current > 0; });
 
-        // Counting remaining players and checking if all of them have have health
-        // >=1
+        // Counting remaining players and checking they all have health >=1
         int alive_players = 0;
         ecs.run_system<Health>([&](Health& h) {
                 ASSERT_GE(h.current, 1);
