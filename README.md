@@ -27,7 +27,7 @@ Above limitations are by design and keeps the implementation performant.
 ---
 
 ## Usage 
-Everything is in "msecs.hpp" header file, just put the file into projects include dir.
+Everything is in "msecs.hpp" header file, just put the file into your project's include dir.
 
 ---
 
@@ -36,5 +36,4 @@ Everything is in "msecs.hpp" header file, just put the file into projects includ
 Planned improvements and additions:
 
 - [x] Use a spare set structure for the main component store  
-- [x] Introduce a `DenseWorld` class as a complement to the current `World` class, offering a more compact representation  
-
+- [x] Introduce a `DenseWorld` class as a complement to the current `World` class.
