@@ -53,7 +53,7 @@ template <typename... Types> class World {
 
                 (is_valid_component<std::decay_t<CompTypes>>(), ...);
 
-                uint64_t id = (get_mask<std::decay_t<CompTypes>>() | ...);
+                constexpr uint64_t id = (get_mask<std::decay_t<CompTypes>>() | ...);
 
                 auto& entity_ids = std::get<0>(ComponentStore);
                 entity_ids.push_back(id);
@@ -74,8 +74,9 @@ template <typename... Types> class World {
         {
                 (is_valid_component<std::decay_t<Args>>(), ...);
 
-                uint64_t system_id = ((get_mask<Args>()) | ...);
-                auto& entity_ids   = std::get<0>(ComponentStore);
+                constexpr uint64_t system_id = ((get_mask<Args>()) | ...);
+
+                auto& entity_ids = std::get<0>(ComponentStore);
                 for (size_t i = 0; i < entity_ids.size(); ++i) {
                         if ((entity_ids[i] & system_id) == system_id) {
                                 func(*std::get<std::vector<std::unique_ptr<Args>>>(
